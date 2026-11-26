@@ -47,7 +47,23 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   const v = document.getElementById('v'), estado = document.getElementById('estado'), err = document.getElementById('err');
   const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
   let stream = null, listo = false, ultimo = 0;
-  document.getElementById('volver').href = APP_URL || '#';
+
+  // Celular recordado: la app manda nombre y llave en el # (no viaja a ningún servidor) y se guarda acá,
+  // en el celular, para poder volver a la app sin pedir el PIN.
+  function leerCel() { try { return JSON.parse(localStorage.getItem('ch_dev') || 'null'); } catch (e) { return null; } }
+  (function () {
+    const h = new URLSearchParams(location.hash.slice(1));
+    if (h.get('n') && h.get('dev')) { try { localStorage.setItem('ch_dev', JSON.stringify({ nombre: h.get('n'), dev: h.get('dev') })); } catch (e) {} }
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  })();
+  function urlApp(qr) {
+    const c = leerCel(), p = [];
+    if (qr) p.push('qr=' + encodeURIComponent(qr));
+    if (c && c.nombre && c.dev) p.push('n=' + encodeURIComponent(c.nombre), 'dev=' + encodeURIComponent(c.dev));
+    const q = p.join('&');
+    return APP_URL + (q ? (APP_URL.indexOf('?') >= 0 ? '&' : '?') + q : '');
+  }
+  document.getElementById('volver').href = urlApp('') || '#';
 
   function token(texto) {
     const m = /[?&]qr=([A-Za-z0-9_-]+)/.exec(texto || '');
@@ -60,7 +76,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     estado.textContent = '✓ QR leído. Volviendo a la app…';
     try { navigator.vibrate && navigator.vibrate(80); } catch (e) {}
     if (stream) stream.getTracks().forEach(x => x.stop());
-    setTimeout(() => location.replace(APP_URL + (APP_URL.indexOf('?') >= 0 ? '&' : '?') + 'qr=' + encodeURIComponent(t)), 250);
+    setTimeout(() => location.replace(urlApp(t)), 250);
   }
   function mostrarError(t) {
     err.textContent = t; err.classList.remove('hide');
@@ -104,7 +120,10 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     img.onload = () => { const t = token(leer(img, img.width, img.height)); URL.revokeObjectURL(url); t ? irALaApp(t) : mostrarError('No encontré el QR en la foto. Probá de nuevo, más cerca.'); };
     img.src = url;
   };
-  iniciar();
+  // Si se llegó escaneando el QR impreso con la cámara del celular (?qr=…), se vuelve directo a la app
+  const qrDelLink = new URLSearchParams(location.search).get('qr');
+  if (qrDelLink && APP_URL) { estado.textContent = 'Volviendo a la app…'; listo = true; location.replace(urlApp(qrDelLink)); }
+  else iniciar();
 }
 </script>
 </body>
