@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Control de horas</title>
+<meta name="theme-color" content="#5C2D91">
+<meta name="apple-mobile-web-app-title" content="Horas">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+html,body{margin:0;height:100%;background:#F8F6FB;overflow:hidden}
+iframe{position:fixed;inset:0;width:100%;height:100%;height:100dvh;border:0;display:block}
+.carga{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#625A73}
+</style>
+</head>
+<body>
+<div class="carga" id="carga">Cargando…</div>
+<script src="config.js"></script>
+<script>
+{
+  // Prueba: muestra la app de Google adentro de esta página, para ver si así no aparece el cartel de Google.
+  const APP_URL = window.APP_URL || '';
+  if (!APP_URL) { document.getElementById('carga').textContent = 'Falta el link de la app (config.js).'; }
+  else {
+    const p = new URLSearchParams(location.search);
+    try {
+      const c = JSON.parse(localStorage.getItem('ch_dev') || 'null');
+      if (c && c.nombre && c.dev && !p.get('dev')) { p.set('n', c.nombre); p.set('dev', c.dev); }
+    } catch (e) {}
+    const q = [];
+    p.forEach((v, k) => q.push(encodeURIComponent(k) + '=' + encodeURIComponent(v)));
+    const f = document.createElement('iframe');
+    f.src = APP_URL + (q.length ? (APP_URL.indexOf('?') >= 0 ? '&' : '?') + q.join('&') : '');
+    f.allow = 'camera; clipboard-write';
+    f.title = 'Control de horas';
+    f.onload = () => { const c = document.getElementById('carga'); if (c) c.remove(); };
+    document.body.appendChild(f);
+  }
+}
+</script>
+</body>
+</html>
