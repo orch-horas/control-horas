@@ -61,7 +61,7 @@ video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     if (qr) p.push('qr=' + encodeURIComponent(qr));
     if (c && c.nombre && c.dev) p.push('n=' + encodeURIComponent(c.nombre), 'dev=' + encodeURIComponent(c.dev));
     const q = p.join('&');
-    return APP_URL + (q ? (APP_URL.indexOf('?') >= 0 ? '&' : '?') + q : '');
+    return 'app.html' + (q ? '?' + q : '');   // la app adentro de nuestra página (sin el cartel de Google)
   }
   document.getElementById('volver').href = urlApp('') || '#';
 

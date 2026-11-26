@@ -66,13 +66,8 @@ ol{padding-left:20px;line-height:1.7;font-size:15px}
   const APP_URL = window.APP_URL || '';   // se configura en config.js
 
   const ok = /^https:\/\/script\.google\.com\/.+\/exec/.test(APP_URL);
-  // Si este celular está recordado (lo guarda el escáner), se abre la app sin pedir el PIN
-  let destino = APP_URL;
-  try {
-    const c = JSON.parse(localStorage.getItem('ch_dev') || 'null');
-    if (ok && c && c.nombre && c.dev) destino = APP_URL + '?n=' + encodeURIComponent(c.nombre) + '&dev=' + encodeURIComponent(c.dev);
-  } catch (e) {}
-  const abrir = document.getElementById('abrir');
+  // La app se abre dentro de app.html (sin el cartel de Google); app.html agrega el celular recordado
+  const destino = 'app.html';
   if (ok) abrir.href = destino; else { document.getElementById('sinLink').classList.remove('hide'); abrir.classList.add('hide'); }
 
   // Mostrar solo los pasos del sistema del celular
