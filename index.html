@@ -38,7 +38,7 @@ ol{padding-left:20px;line-height:1.7;font-size:15px}
     <p class="sub">Equipo de rampa</p>
   </div>
 
-  <div id="sinLink" class="warn hide">Todavía falta poner el link de la app en este archivo (línea <b>APP_URL</b>).</div>
+  <div id="sinLink" class="warn hide">Todavía falta poner el link de la app en este archivo (archivo <b>config.js</b>).</div>
   <a class="btn" id="abrir" href="#">Abrir la app</a>
 
   <div class="card" id="pasosAndroid">
@@ -60,11 +60,10 @@ ol{padding-left:20px;line-height:1.7;font-size:15px}
   </div>
   <p class="muted">Desde el ícono se abre directo la app para marcar tu horario.</p>
 </main>
+<script src="config.js"></script>
 <script>
 {
-  // ===== Pegá acá el link de la app web de Google (termina en /exec) =====
-  const APP_URL = 'https://script.google.com/macros/s/AKfycbxJzVMkvv35WvMIVuOtvfrO9z9vh_32Ehop6AcDpTsv_u1I_cnyr6Vus5GecSD2BKwdxg/exec';
-  // =======================================================================
+  const APP_URL = window.APP_URL || '';   // se configura en config.js
 
   const ok = /^https:\/\/script\.google\.com\/.+\/exec/.test(APP_URL);
   const abrir = document.getElementById('abrir');
