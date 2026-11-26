@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Control de horas</title>
+<meta name="apple-mobile-web-app-title" content="Horas">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#0F6E56">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#F7F9F8;color:#1d2a27;min-height:100vh;
+  padding:max(24px,env(safe-area-inset-top)) 20px max(24px,env(safe-area-inset-bottom))}
+main{max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:18px;align-items:stretch}
+.head{text-align:center}
+.head img{width:96px;height:96px;border-radius:22px}
+h1{font-size:24px;margin-top:10px}
+.sub{color:#5b6b67;font-size:15px;margin-top:4px}
+.btn{display:block;text-align:center;background:#0F6E56;color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:16px;border-radius:14px}
+.card{background:#fff;border:1px solid #e1e8e6;border-radius:14px;padding:16px}
+.card h2{font-size:16px;margin-bottom:8px}
+ol{padding-left:20px;line-height:1.7;font-size:15px}
+.muted{color:#7a8884;font-size:13px;text-align:center;line-height:1.5}
+.hide{display:none}
+.warn{background:#FCEBEB;color:#791F1F;border-radius:10px;padding:12px;font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <div class="head">
+    <img src="icon-192.png" alt="" width="96" height="96">
+    <h1>Control de horas</h1>
+    <p class="sub">Equipo de rampa</p>
+  </div>
+
+  <div id="sinLink" class="warn hide">Todavía falta poner el link de la app en este archivo (línea <b>APP_URL</b>).</div>
+  <a class="btn" id="abrir" href="#">Abrir la app</a>
+
+  <div class="card" id="pasosAndroid">
+    <h2>Tenerla en la pantalla de inicio (Android)</h2>
+    <ol>
+      <li>Abrí esta página en <b>Chrome</b>.</li>
+      <li>Tocá los <b>tres puntitos</b> de arriba a la derecha.</li>
+      <li>Tocá <b>"Agregar a la pantalla principal"</b> o <b>"Instalar app"</b>.</li>
+      <li>Confirmá. Va a aparecer el ícono del reloj con el nombre <b>Horas</b>.</li>
+    </ol>
+  </div>
+  <div class="card" id="pasosIphone">
+    <h2>Tenerla en la pantalla de inicio (iPhone)</h2>
+    <ol>
+      <li>Abrí esta página en <b>Safari</b>.</li>
+      <li>Tocá el botón <b>Compartir</b> (el cuadrado con la flecha para arriba).</li>
+      <li>Tocá <b>"Agregar a pantalla de inicio"</b> y después <b>Agregar</b>.</li>
+    </ol>
+  </div>
+  <p class="muted">Desde el ícono se abre directo la app para marcar tu horario.</p>
+</main>
+<script>
+{
+  // ===== Pegá acá el link de la app web de Google (termina en /exec) =====
+  const APP_URL = '';
+  // =======================================================================
+
+  const ok = /^https:\/\/script\.google\.com\/.+\/exec/.test(APP_URL);
+  const abrir = document.getElementById('abrir');
+  if (ok) abrir.href = APP_URL; else { document.getElementById('sinLink').classList.remove('hide'); abrir.classList.add('hide'); }
+
+  // Mostrar solo los pasos del sistema del celular
+  const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const android = /Android/.test(ua);
+  if (ios) document.getElementById('pasosAndroid').classList.add('hide');
+  if (android) document.getElementById('pasosIphone').classList.add('hide');
+
+  // Si se abrió desde el ícono de la pantalla de inicio, ir directo a la app
+  const desdeIcono = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true || /[?&]abrir=1/.test(location.search);
+  if (desdeIcono && ok) location.replace(APP_URL);
+}
+</script>
+</body>
+</html>
